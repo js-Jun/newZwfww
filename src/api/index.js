@@ -1,20 +1,25 @@
 import axios from 'axios'
-
-// axios.defaults.headers = {
-//     "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
-// }
-// axios.defaults.transformRequest = [function (data) {
-//     var newData = "";
-//     for (var k in data) {
-//         newData += encodeURIComponent(k) + '=' + encodeURIComponent(data[k]) + '&'
-//     }
-//     return newData
-// }]
-
-//查看服务数据
-// export const viewServerData = () => {
-//     return axios.get('/api/actuator/gateway/routes').then(res => res.data)
-// }
+//请求拦截
+// axios.interceptors.request.use(
+//     config => {
+//         console.log('config')
+//         console.log(config)
+//         return config;
+//     },
+//     err => {
+//         return Promise.reject(err);
+//     });
+//响应拦截
+axios.interceptors.response.use(
+    response => {
+        console.log('response')
+        console.log(response)
+        return response;
+    },
+    error => {
+        console.log('error')
+        console.log(error)
+    });
 
 //搜索事项
 export const UserSearchData = params => {

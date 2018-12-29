@@ -11,7 +11,7 @@ const state = {
 
 //定义用于修改数据的方法
 const mutations = {
-
+        
 }
 
 //用于异步修改state的数据

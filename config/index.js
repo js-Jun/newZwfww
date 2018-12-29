@@ -12,7 +12,7 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
           '/item': {  //董伟  搜索
-                  target: 'http://192.168.1.128:4003/', 
+                  target: 'http://192.168.1.70:4003/', 
                 changeOrigin: true,
                 pathRewrite: {
                 '^/item': ''
@@ -25,8 +25,8 @@ module.exports = {
               '^/user': ''
               }
             },
-            '/area': { //方丽 区划
-              target: 'http://192.168.1.111:4005/', 
+            '/area': { //方丽 区划  http://223.75.53.43:8008/   http://192.168.1.111:4005/
+              target: 'http://223.75.53.43:8008/', 
               changeOrigin: true, //可否跨域  
               pathRewrite: {
               '^/area': ''

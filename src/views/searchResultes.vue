@@ -4,20 +4,20 @@
             <div class="searchInputBox fixedCenterStyle clearfix">
                 <input type="text" placeholder="请输入你想要搜索的事项" @keyup.enter="searchEvent" v-model="newSearchVal" class="searchText">
                 <input type="button" value="搜索" class="searchBtn" @click="searchEvent">
-                <div class="searchCount">为您找到相关结果约{{searchResData.totalSize}}个</div>
+                <div class="searchCount">为您找到相关结果约{{searchResData.totalSize ? searchResData.totalSize : 0}}个</div>
             </div>
         </div>
        <div class="search_quyu fixedCenterStyle">
             <span>区域选择：</span>
             <!-- 一级区域 -->
             <div class="quyu" @mouseover="quyu_mouseover" @mouseout="quyu_mouseout">
-                <span>{{municipalShow ? municipalShow : '湖北省'}}</span>
+                <span>{{municipalShow ? municipalShow === '全部' ? '湖北省': municipalShow : '湖北省'}}</span>
                 <i class="el-icon-arrow-down" :class="{'active':quyu_isShow}"></i> 
                 <div class="options quyu-options" v-show="quyu_isShow">
                     <ul>
                         <li v-for="(item,index) in municipalArea" :key="index" 
                         :title="item.name"
-                        @click="quyu_click(item.code,item.parentCode,item.name)">
+                        @click="quyu_click(item.code,item.parentCode,item.name,item.grade)">
                         {{item.name}}
                         </li>
                     </ul>
@@ -31,7 +31,7 @@
                     <ul>
                         <li v-for="(item,index) in districtArea" :key="index" 
                         :title="item.name"
-                        @click="district_click(item.code,item.parentCode,item.name)">
+                        @click="quyu_click(item.code,item.parentCode,item.name,item.grade)">
                         {{item.name}}
                         </li>
                     </ul>
@@ -45,7 +45,7 @@
                     <ul>
                         <li v-for="(item,index) in streetArea" :key="index" 
                         :title="item.name"
-                        @click="street_click(item.code,item.parentCode,item.name)">
+                        @click="quyu_click(item.code,item.parentCode,item.name,item.grade)">
                         {{item.name}}
                         </li>
                     </ul>
@@ -59,24 +59,24 @@
                     <ul>
                         <li v-for="(item,index) in rcArea" :key="index"
                         :title="item.name" 
-                        @click="rc_click(item.code,item.parentCode,item.name)">
+                        @click="quyu_click(item.code,item.parentCode,item.name,item.grade)">
                         {{item.name}}
                         </li>
                     </ul>
                 </div>
             </div>
-
+            <el-checkbox v-model="checked" @change="lyLocalLevel">仅显示本级</el-checkbox>
         </div>
         <div class="search_filter fixedCenterStyle">
             <!-- 选择条件 -->
             <div class="choose_conditions">
                 <div class="choose_result">全部结果 ></div>
-                <div v-if="searchParameter.filterMap.titleName">部门分类:<span>{{searchParameter.filterMap.titleName[0]}}</span><i @click.stop="deleteBumen" class="el-icon-close"></i></div>
-                <div v-if="searchParameter.filterMap.orgShortName">事项分类:<span>{{searchParameter.filterMap.orgShortName[0]}}</span><i @click.stop="deleteShixiang" class="el-icon-close"></i></div>
+                <div v-if="searchParameter.filterMap.orgShortName">部门分类:<span>{{searchParameter.filterMap.orgShortName[0]}}</span><i @click.stop="deleteShixiang" class="el-icon-close"></i></div>
+                <div v-if="searchParameter.filterMap.titleName">事项分类:<span>{{searchParameter.filterMap.titleName[0]}}</span><i @click.stop="deleteBumen" class="el-icon-close"></i></div>
                 <span>“{{searchParameter.keyWord}}”</span>
             </div>
             <!-- 条件选项 -->
-            <div class="conditions_option">
+            <div class="conditions_option" v-if="calculateResult.filterMap">
                 <!-- 事项选项 -->
                 <div class="bumen_option clearfix" v-if="calculateResult.filterMap.orgShortName.length">
                     <div class="option_title">
@@ -125,7 +125,7 @@
                         <span>服务对象:</span><span>{{item.serviceObjectName}}</span>
                     </div>
                     <div>
-                        <span>办件类型:</span><span>{{item.onlineDepthName}}</span>
+                        <span>办件类型:</span><span>{{item.assortName}}</span>
                     </div>
                     <div>
                         <span>申请形式:</span><span>{{item.isOnlineNmae+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+item.onlineDepthName}}</span>
@@ -171,12 +171,15 @@ import Vue from 'vue'
             return {
                  currentPage1: 1,
                  newSearchVal:'',  //搜索的关键字
+                 checked:false,
                  searchParameter:{ //用户搜索的参数 
                      currentPage:1,
                      pageSize:10,
                      keyWord:this.$store.state.userCearchText,
+                     grade:'2',
+                     onlyLocalLevel:0,
                      filterMap:{
-                        // agentCode:['420000000000']
+                        regionCode:['420000000000']
                      }
                  },
                 totalPage:'',
@@ -193,7 +196,6 @@ import Vue from 'vue'
                 districtArea:[],   //二级
                 streetArea:[],     //三级
                 rcArea:[],         //四级
-                parentCode:'',     //当前区划的父级区划
                 isShow:false, 
                 currentParentCode:'',//当用户点击全部时
                 quyu_isShow:false,//区域一级选项盒子隐藏
@@ -217,7 +219,7 @@ import Vue from 'vue'
         created(){
             this.querySearchData(this.searchParameter);
             this.getmunicipalArea('420000000000');
-        },
+        },  
         methods: {
               handleSizeChange(val) {
                 console.log(`每页 ${val} 条`);
@@ -233,9 +235,12 @@ import Vue from 'vue'
                     if(res.code === 1){
                         //获取数据成功
                         this.searchResData = res.data
-                        if(res.data.result.length === 0){
+                        console.log(res.data.result)
+                        if(!res.data.result){
+                            this.searchResData = []
                             this.isShow = false
                         }else{
+                            this.searchResData = res.data
                             this.isShow = true
                         }
                     }
@@ -295,62 +300,86 @@ import Vue from 'vue'
                         let parentCode = res.body[0].parentCode
                         switch (grade)
                         {
+                            case '2':
                             case '3':
                             this.municipalArea = res.body;
-                            this.municipalArea.unshift({name:'湖北省',code:'420000000000'});
+                            this.municipalArea.unshift({name:'湖北省',code:'420000000000',grade:'2'});
                             break;
                             case '4':
                             this.districtArea = res.body;
-                            this.districtArea.unshift({name:'全部',code:parentCode});
+                            this.districtArea.unshift({name:'全部',code:parentCode,grade:'3'});
                             break;
                             case '5':
                             this.streetArea = res.body;
-                            this.streetArea.unshift({name:'全部',code:parentCode});
+                            this.streetArea.unshift({name:'全部',code:parentCode,grade:'4'});
                             break;
                             case '6':
                             this.rcArea = res.body;
-                            this.rcArea.unshift({name:'全部',code:parentCode});
+                            this.rcArea.unshift({name:'全部',code:parentCode,grade:'5'});
                             break;
                         }
                     }
                 })
             },
-            quyu_click(code,parentCode,name){
-                this.$set(this.searchParameter.filterMap, 'agentCode', code);
-                this.parentCode = parentCode
-                this.districtArea = [] 
-                this.streetArea=[]   
-                this.rcArea=[]
-                this.municipalShow = '';
-                this.districtShow = '';
-                this.streetShow = '';
-                this.getmunicipalArea(code)
-                this.municipalShow = name
-                this.quyu_isShow = false;
-            },
-            district_click(code,parentCode,name){
-                this.$set(this.searchParameter.filterMap, 'agentCode', code);
-                this.streetArea=[]   
-                this.rcArea=[]
-                this.districtShow = '';
-                this.streetShow = '';
-                this.getmunicipalArea(code)
-                this.districtShow = name
-                this.district_isShow = false;
-            },
-            street_click(code,parentCode,name){
-                this.$set(this.searchParameter.filterMap, 'agentCode', code);
-                this.rcArea=[]
-                this.streetShow = '';
-                this.getmunicipalArea(code)
-                this.streetShow = name
-                this.street_isShow = false;
-            },
-            rc_click(code,parentCode,name){
-                this.$set(this.searchParameter.filterMap, 'agentCode', code);
-                this.rcShow = name
-                this.rc_isShow = false;
-            }
+            quyu_click(code,parentCode,name,grade){
+                        this.$set(this.searchParameter, 'grade', grade);
+                        this.$set(this.searchParameter.filterMap, 'regionCode', [code]);
+                        if(name !== '全部') {
+                        this.getmunicipalArea(code)
+                        switch (grade)
+                        {
+                            case '2':
+                            case '3':
+                            this.districtArea = [] 
+                            this.streetArea=[]   
+                            this.rcArea=[]
+                            console.log(this.municipalShow)
+                            this.districtShow = '';
+                            this.streetShow = '';
+                            this.rcArea=[]
+                            this.municipalShow = name
+                            this.quyu_isShow = false;
+                            break;
+                            case '4':
+                            this.streetArea=[]   
+                            this.rcArea=[]
+                            this.districtShow = '';
+                            this.streetShow = '';
+                            this.districtShow = name
+                            this.district_isShow = false;
+                            break;
+                            case '5':
+                            this.rcArea=[]
+                            this.streetShow = '';
+                            this.streetShow = name
+                            this.street_isShow = false;
+                            break;
+                            case '6':
+                            this.rcShow = name
+                            this.rc_isShow = false;
+                            break;
+                        }
+                    }else{
+                         switch (grade)
+                         {
+                            case '3':
+                            this.districtShow = '';
+                            this.streetArea=[];
+                            this.rcArea=[];
+                            break;
+                            case '4':
+                            this.streetShow = '';
+                            this.rcArea=[];
+                            break;
+                            case '5':
+                            this.rcShow=''
+                         }
+                    }
+
+                },
+                lyLocalLevel(val){
+                    this.$set(this.searchParameter, 'onlyLocalLevel', val ? 1 : 0);
+                }
         },
         watch:{
             searchParameter:{//深度监听，可监听到对象、数组的变化
