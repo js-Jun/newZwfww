@@ -1,11 +1,12 @@
 <template>
     <div class="home">
         <el-container>
-            <el-header style="height:80px" :class="[$route.path === '/home/userInfo' ? 'variableStyle' : '',$route.path ==='/home/searchPage'?'homeColor':'']">
+            <el-header style="height:80px" :class="[$route.path === '/home/userInfo'||'/home/guide' ? 'variableStyle' : '',$route.path ==='/home/searchPage'?'homeColor':'']">
                 <div class="fixedCenterStyle headerBanner clearfix">
                     <h1 class="fl log wc" @click="$router.push('/home/searchPage')">湖北政务服务网</h1>
                     <div class="currentPageName divider fl"  v-if="$route.path === '/home/userInfo'">用户中心(个人)</div>
                     <div class="currentPageName divider fl"  v-else-if="$route.path === '/home/searchResultes'">搜索</div>
+                    <div class="currentPageName divider fl"  v-else-if="$route.path === '/home/guide'">办事指南</div>
                     <div class="fr headerInfo clearfix">
                         <a href="#" class="fl wc">湖北省人民政府</a>
                         <i class="el-icon-bell divider fl wc"></i>
@@ -26,7 +27,7 @@
                 </div>
             </el-header>
             <el-main>
-                <navtab v-if="$route.path !== '/home/userInfo' && $route.path !== '/home/searchResultes'"></navtab>
+                <navtab v-if="$route.path !== '/home/userInfo' && $route.path !== '/home/searchResultes'&& $route.path !== '/home/guide'"></navtab>
                 <router-view></router-view>
             </el-main>
             <el-footer>Footer</el-footer>
@@ -52,13 +53,8 @@ export default {
         //获取用户信息成功
         this.$store.state.userInfo = res.body
         this.username = res.body.personName
-      }else{
-         this.$message.error('获取用户信息时出错');
       }
-    }).catch(err => {
-                console.log(err)
-                this.$message.error('服务器请求失败，请检查网络');
-      })
+    })
   },
   methods: {
     handleCommand(command) {

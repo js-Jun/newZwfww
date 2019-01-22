@@ -237,13 +237,9 @@ import { regionDataPlus,CodeToText } from 'element-china-area-data'
                         this.userInfo = res.body;
                         this.userId = res.body.personId;
                         this.accountType = res.body.accountType;
-                    }else{
-                        this.$message.error('获取用户信息时出错');
                     }
                     })
-                    .catch(err => {
-                    this.$message.error('服务器请求失败，请检查网络');
-                })
+                  
                 },
                 addUserEmail(dom){ //添加邮箱
                     let UserEmail = {
@@ -319,8 +315,6 @@ import { regionDataPlus,CodeToText } from 'element-china-area-data'
                             type: 'warning'
                             });
                         }
-                    }).catch(err => {
-                        this.$message.error('服务器请求失败，请检查网络');
                     })
                 },
                 addUserPhone(dom){  //添加手机号
@@ -349,8 +343,6 @@ import { regionDataPlus,CodeToText } from 'element-china-area-data'
                             }else{
                                 this.$message.error(res.header.msg);
                             }
-                        }).catch(err => {
-                            this.$message.error('服务器请求失败，请检查网络');
                         })
                     } else {
                         console.log('error submit!!');
@@ -400,8 +392,6 @@ import { regionDataPlus,CodeToText } from 'element-china-area-data'
                             }else{
                                 this.$message.error(res.header.msg);
                             }
-                        }).catch(err => {
-                            this.$message.error('服务器请求失败，请检查网络');
                         })
                     } else {
                         console.log('error submit!!');
@@ -428,8 +418,6 @@ import { regionDataPlus,CodeToText } from 'element-china-area-data'
                             type: 'warning'
                             });
                         }
-                    }).catch(err => {
-                        this.$message.error('服务器请求失败，请检查网络');
                     })
                 } 
                 },

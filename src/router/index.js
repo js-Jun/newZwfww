@@ -12,6 +12,11 @@ export default new Router({
       component:resolve => require(['@/views/login'],resolve)
     },
     {
+      path:'/guide/:id',
+      name:'Guide',
+      component:resolve => require(['@/views/guide'],resolve)
+    },
+    {
       path: '/home',
       name: 'Home',
       component:resolve => require(['@/views/home'],resolve),
@@ -36,7 +41,8 @@ export default new Router({
           path:'searchResultes',
           name:'SearchResultes',
           component:resolve => require(['@/views/searchResultes'],resolve)
-        }
+        },
+
       ]
     }
   ]

@@ -5,14 +5,15 @@
 const path = require('path')
 
 module.exports = {
-  dev: {
 
+  dev: {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
+
     proxyTable: {
           '/item': {  //董伟  搜索
-                  target: 'http://192.168.1.70:4003/', 
+                  target: 'http://192.168.1.65:4003/', 
                 changeOrigin: true,
                 pathRewrite: {
                 '^/item': ''
@@ -25,8 +26,16 @@ module.exports = {
               '^/user': ''
               }
             },
+            // http://223.75.53.43:8005/comm/dict/10020/type
+            '/network': {  //陈强 网办深度  事项详情
+              target: 'http://223.75.53.43:8005/', 
+              changeOrigin: true, //可否跨域
+              pathRewrite: {
+              '^/network': ''
+              }
+            },
             '/area': { //方丽 区划  http://223.75.53.43:8008/   http://192.168.1.111:4005/
-              target: 'http://223.75.53.43:8008/', 
+              target: 'http://192.168.1.19:4005/', 
               changeOrigin: true, //可否跨域  
               pathRewrite: {
               '^/area': ''
@@ -34,18 +43,15 @@ module.exports = {
         },
     },
     // Various Dev Server settings
-    host: 'localhost', // can be overwritten by process.env.HOST
+    host: 'localhost',//'localhost', // can be overwritten by process.env.HOST
     port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: true,
     errorOverlay: true,
     notifyOnErrors: true,
     poll: false, // https://webpack.js.org/configuration/dev-server/#devserver-watchoptions-
-
-    
     /**
      * Source Maps
      */
-
     // https://webpack.js.org/configuration/devtool/#development
     devtool: 'cheap-module-eval-source-map',
 

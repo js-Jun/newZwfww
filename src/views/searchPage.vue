@@ -21,13 +21,13 @@ export default{
     },
     methods:{
         searchEvent(){
-            if(this.searchText === ''){
-                this.$message({
-                message: '请输入您想搜索的关键词',
-                type: 'warning'
-                });
-                return
-            }
+            // if(this.searchText === ''){
+            //     this.$message({
+            //     message: '请输入您想搜索的关键词',
+            //     type: 'warning'
+            //     });
+            //     return
+            // }
             this.$store.state.userCearchText = this.searchText
             this.$router.push('/home/searchResultes')
         }
