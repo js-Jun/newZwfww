@@ -1,0 +1,344 @@
+<head>
+    <meta charset="UTF-8">
+    <!-- 引入elementui CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="./commen.css">
+    <title>商品修改</title>
+</head>
+
+<body>
+    <div id="app">
+<div>
+</div>
+        <div class="proBasicInfo">
+            <el-row>
+                <el-col :span="2">商品名称：</el-col>
+                <el-col :span="22">鱿鱼丝原味60g</el-col>
+            </el-row>
+            <el-row>
+                <el-col :span="2">商品分类：</el-col>
+                <el-col :span="22">鱿鱼丝原味60g</el-col>
+            </el-row>
+            <el-row>
+                <el-col :span="2">外卖SKU：</el-col>
+                <el-col :span="22">ZH234234234</el-col>
+            </el-row>
+            <el-row>
+                <el-col :span="2">POS SKU：</el-col>
+                <el-col :span="22">123124312</el-col>
+            </el-row>
+            <el-row>
+                <el-col :span="2">商品价格：</el-col>
+                <el-col :span="22">52.56</el-col>
+            </el-row>
+            <el-row>
+                <el-col :span="2">商品规格：</el-col>
+                <el-col :span="22">KG</el-col>
+            </el-row>
+            <el-row>
+                <el-col :span="2">商品重量：</el-col>
+                <el-col :span="22">0.573</el-col>
+            </el-row>
+            <el-row>
+                <el-col :span="2">前端规格设置：</el-col>
+                <el-col :span="12">
+                  <el-row class="spcSetBox">
+                    <template v-for="(item2,index2) in qdData" key="index2">
+                      <!-- {{index2}}
+                      {{JSON.stringify(specType)}} -->
+                      <!-- <template v-for="(item2,index2) in item1" key="index2"> -->
+                        <el-form ref="form" :model="form" label-width="80px">
+
+                          <el-form-item label="规格名称:" class="bgcSty">
+                            <i class="el-icon-error prcItemdleteIco2" @click="handleDeletePrcTypeItem(index2)"></i>
+                            <el-select v-model="specType[index2]" placeholder="请选择" @change="handlePrcTypeSelect($event,index2)">
+                              <el-option v-for="prcItem in prcType" :label="prcItem.label" :key="prcItem.value" :value="prcItem.value"></el-option>
+                            </el-select>
+                              <el-row v-if="index2 === 0">
+                                <el-checkbox v-model="isAddImage" @change="handleIsAddImg($event,index2)">添加规格图片</el-checkbox>
+                              </el-row>
+                          </el-form-item>
+                      
+                            <el-form-item label="规格值:">
+                              <el-row class="spcNubBox">
+                                <template v-for="(item3,index3) in item2" key="index3">
+                               <el-col :span="5" class="spcNubItem">
+                                   <el-autocomplete
+                                   class="inline-input"
+                                   v-model="state1"
+                                   :fetch-suggestions="querySearch"
+                                   placeholder="请输入内容"
+                                   @select="handleSelect"
+                                 ></el-autocomplete>
+                                 <i class="el-icon-error prcItemdleteIco" @click="handleDeletePrcNumItem(index2,index3)"></i>
+                                   <!-- <el-upload
+                                       action="https://jsonplaceholder.typicode.com/posts/"
+                                       :class="{disabled:uploadDisabled}"
+                                       list-type="picture-card"
+                                       :file-list="imagelist"
+                                       :on-preview="handlePictureCardPreview"
+                                       :on-progress="handleSuccessImg"
+                                       :on-remove="handleRemove">
+                                       <i class="el-icon-plus"></i>
+                                     </el-upload>
+                                     <el-dialog :visible.sync="dialogVisible">
+                                       <img width="100%" :src="dialogImageUrl" alt="">
+                                     </el-dialog>  -->
+                                </el-col>
+     
+                              </template>
+     
+                         
+                               <!-- 添加规格值按钮 -->
+                               <el-col :span="3">
+                                 <el-button type="text" v-show="item2.length < 8"  @click="handleAddPrcNum(index2)">添加规格值</el-button>
+                               </el-col>
+                              </el-row>
+                               <!-- </el-col> -->
+                           </el-form-item>
+                        </el-form>
+                      <!-- </template> -->
+               
+                    </template>
+
+
+
+
+                    <el-row class="addSpcItemBtn bgcSty">
+                      <el-button plain @click="handleAddPrcItem">添加规格项目</el-button>
+                    </el-row>
+                  </el-row>
+                </el-col>
+            </el-row>
+          </div> 
+    </div>
+        
+<script src="jquery.js"></script>        
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data() {
+         return {
+          //正式渲染前端使用的数据
+          qdData:[
+                      // [
+                      //   {
+                      //         "addPic": false, //是否添加图片
+                      //         "name": "",  //规格/口味 的名称
+                      //         "pic": "", //图片路径
+                      //         "spcOrder": "", //规格排序
+                      //         "type": ""  //type 1:口味,2:规格
+                      //     }
+                      //  ],
+                      //  [
+                      //   {
+                      //         "addPic": false, //是否添加图片
+                      //         "name": "",  //规格/口味 的名称
+                      //         "pic": "", //图片路径
+                      //         "spcOrder": "", //规格排序
+                      //         "type": ""  //type 1:口味,2:规格
+                      //     }
+                      //  ]
+          ],
+          prcType:[
+            {value:'1',label:'口味'},
+            {value:'2',label:'规格'}
+          ],
+          specType:['',''], //规格名称 类型值 1：口味 2：规格
+          isAddImage:false,
+          specBType:'',
+          curPrcType:[],
+          form: {
+            region: '',
+          },
+          checked:true,
+          restaurants: [],
+          state1: '',
+          imageUrl: 'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=643870685,3339650165&fm=26&gp=0.jpg',//图片上传
+          // img s
+          dialogImageUrl: '',
+          dialogVisible: false,
+          imagelist:[]
+          //img e
+         };
+        },
+        methods: {
+          //添加规格项目 事件
+          handleAddPrcItem(){
+            console.log(this.qdData)
+            let curPrcItemNum = this.qdData.length
+            if(curPrcItemNum === 0){
+              this.qdData = [
+                
+                       [
+                        {
+                              "addPic": false, //是否添加图片
+                              "name": "",  //规格/口味 的名称
+                              "pic": "", //图片路径
+                              "spcOrder": "", //规格排序
+                              "type": ""  //type 1:口味,2:规格
+                          }
+                       ]
+              ]
+            }else if(curPrcItemNum === 1){
+              console.log(this.qdData)
+              this.qdData.push([
+                        {
+                            "addPic": false, //是否添加图片
+                            "name": "",  //规格/口味 的名称
+                            "pic": "", //图片路径
+                            "spcOrder": "", //规格排序
+                            "type": ""  //type 1:口味,2:规格
+                        }
+                      ])
+            }
+          },
+          //是否添加规格图片 
+          handleIsAddImg(v,i){
+            console.log(v,i)
+            this.qdData[i].forEach((item => item.addPic =v))
+            console.log(this.qdData)
+          },
+          //规格名称下拉选择事件
+          handlePrcTypeSelect(v,curI){
+              this.curPrcType[curI] = v
+              if(this.curPrcType.length === 0){
+                this.prcType =[{value:'1',label:'口味'},{value:'2',label:'规格'}]
+              }else if(this.curPrcType.length === 2){
+                this.prcType = []
+              }else if(this.curPrcType.length === 1){
+                console.log( this.prcType)
+                let tmpPrcArr = [{value:'1',label:'口味'},{value:'2',label:'规格'}]
+                let tmpi = tmpPrcArr.findIndex(item => item.value === v)
+                    tmpPrcArr.splice(tmpi, 1)
+                this.prcType = tmpPrcArr
+              }
+              this.qdData[curI].forEach((item => item.type =v))
+              console.log(this.qdData)
+              // console.log(this.specAType + '-' + this.specBType)
+          },
+          //添加规格值 事件
+          handleAddPrcNum(index){
+            this.qdData[index].push(
+                {
+                    "addPic": index===0 ? this.isAddImage : false, //是否添加图片
+                    "name": "",  //规格/口味 的名称
+                    "pic": "", //图片路径
+                    "spcOrder": "", //规格排序
+                    "type": this.specType[index]  //type 1:口味,2:规格
+                }
+            )
+            console.log(this.qdData)
+          },
+          //删除规格值 事件
+          handleDeletePrcNumItem(index2,index3){
+            this.qdData[index2].splice(index3, 1)
+          },
+           //删除规格项目 事件
+          handleDeletePrcTypeItem(index2){
+            this.qdData.splice(index2,1)
+            if(index2 == 0){
+              this.specType.splice(0,1)
+              this.specType.push('')
+              console.log(this.specType)
+            }else if(index2 == 1){
+              this.specType[1] = ''
+            }
+            // debugger
+            let curVal = this.curPrcType[index2]
+            this.curPrcType.splice(index2,1)
+            if(this.curPrcType.length === 0){
+              this.prcType =[{value:'1',label:'口味'},{value:'2',label:'规格'}]
+            }else if(this.curPrcType.length === 1){
+                console.log( this.prcType)
+                let tmpPrcArr = [{value:'1',label:'口味'},{value:'2',label:'规格'}]
+                let tmpi = tmpPrcArr.findIndex(item => item.value ===curVal)
+                    // tmpPrcArr.splice(tmpi, 1)
+                this.prcType.push(tmpPrcArr[tmpi])
+                
+              }
+          
+          
+            // console.log(curVal)
+            // let tmpi =  this.prcType.findIndex(item => item.value === curVal)
+            // console.log(tmpi)
+            // if(tmpi != -1){
+            //   this.prcType.splice(tmpi,1)
+            // }
+            // this.curPrcType.splice(index2,1)
+            // console.log( this.curPrcType)
+            // console.log(this.prcType)
+
+          },
+            onSubmit() {
+                console.log('submit!');
+            },
+            querySearch(queryString, cb) {
+              var restaurants = this.restaurants;
+              var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
+              // 调用 callback 返回建议列表的数据
+              cb(results);
+            },
+            createFilter(queryString) {
+              return (restaurant) => {
+                return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+              };
+            },
+            handleSelect(item) {
+              console.log(item);
+            },
+            loadAll() {
+              return [
+                { "value": "三全鲜食（北新泾店）", "address": "长宁区新渔路144号" },
+                { "value": "Hot honey 首尔炸鸡（仙霞路）", "address": "上海市长宁区淞虹路661号" },
+                { "value": "新旺角茶餐厅", "address": "上海市普陀区真北路988号创邑金沙谷6号楼113" },
+                { "value": "泷千家(天山西路店)", "address": "天山西路438号" },
+                { "value": "胖仙女纸杯蛋糕（上海凌空店）", "address": "上海市长宁区金钟路968号1幢18号楼一层商铺18-101" },
+                { "value": "贡茶", "address": "上海市长宁区金钟路633号" },
+                { "value": "豪大大香鸡排超级奶爸", "address": "上海市嘉定区曹安公路曹安路1685号" },
+                { "value": "茶芝兰（奶茶，手抓饼）", "address": "上海市普陀区同普路1435号" }
+              ];
+          },
+          // 图片上传 S
+          handleSuccessImg(event, file, fileList){
+            console.log(fileList)
+          },
+          handleRemove(file, fileList) {
+            console.log(file, fileList);
+          },
+          handlePictureCardPreview(file) {
+            console.log(file)
+            this.dialogImageUrl = file.url;
+            this.dialogVisible = true;
+          }
+           // 图片上传 E
+        },
+        computed: {
+          // prcComputedHandle: {
+          //   get: function () {
+          //   return this.info.sex === 1 ? '男' : this.info.sex === 0 ? '女' : '未知'
+          //   },
+          //   set: function (value) {
+          //     this.info.sex = value === '男' ? 1 : 0
+          //   }
+            
+          // },
+          uploadDisabled:function() {
+            console.log(this.imagelist)
+              return this.imagelist.length >0
+          },
+        
+        },
+        created(){
+            console.log('vue实例挂载完毕')
+        },
+        mounted() {
+            console.log('dom挂载完毕')
+            console.log($)
+            this.restaurants = this.loadAll();
+        }
+    })
+
+            </script>
