@@ -1,0 +1,77 @@
+.spcSetBox{
+    border: 1px solid #eee;
+    padding: 20px;
+    /* height: 600px; */
+}
+.proBasicInfo > .el-row{
+  margin-bottom: 20px;
+}
+.bgcSty{
+    background-color: #f8f8f8;
+    padding: 15px 8px;
+    position: relative;
+}
+.bgcSty:hover  .prcItemdleteIco2{
+    display: inline-block
+}
+.spcNubItem{
+    position: relative;
+    margin-right: 20px;
+    margin-bottom: 15px;
+}
+
+.spcNubItem:hover .prcItemdleteIco{
+    display: inline-block
+}
+/* 图片上次 S */
+.spcNubItemInput{
+  margin-bottom: 15px;
+}
+.spcNubItem .spcNubItemUploadImg{
+  padding-left: 10px;
+}
+/* .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 136px;
+    height: 136px;
+    line-height: 136px;
+    text-align: center;
+  }
+  .avatar {
+    width: 136px;
+    height: 136px;
+    display: block;
+  } */
+  .disabled .el-upload--picture-card {
+    display: none;
+}
+/* 图片上次 E*/
+.prcItemdleteIco{
+    position: absolute;
+    top: -6px;
+    right: -4px;
+    font-size: 18px;
+    opacity: .5;
+    cursor: pointer;
+    display: none;
+}
+.prcItemdleteIco2{
+    position: absolute;
+    top: -12px;
+    right: -4px;
+    font-size: 18px;
+    opacity: .5;
+    cursor: pointer;
+    display: none;
+}
